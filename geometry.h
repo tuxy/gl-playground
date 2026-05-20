@@ -3,7 +3,12 @@
 
 #include <glad/glad.h>
 #include <vector>
-#include <iostream>
+
+struct Attribute {        // Float by default
+  size_t vec_size;        // Size of stored vector (usually vec3)
+  size_t attribute_count; // Number of stored items (position, normal, color,
+                          // etc...)
+};
 
 // This structure enforces the creation and management of single states
 class Geometry {
@@ -14,8 +19,8 @@ public:
   uint32_t indexCount;
   uint32_t vertexCount;
 
-  Geometry(std::vector<float> vertices_arr, std::vector<int> indices_arr) {
-
+  Geometry(std::vector<float> vertices_arr, std::vector<int> indices_arr,
+           Attribute attribute) {
     indexCount = indices_arr.size();
     vertexCount = vertices_arr.size();
 
@@ -33,13 +38,21 @@ public:
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices_arr.size(),
                  indices_arr.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                          (void *)0);
-    glEnableVertexAttribArray(0);
+    for (int i = 0; i < attribute.attribute_count; i++) {
+      glVertexAttribPointer(i, attribute.vec_size, GL_FLOAT, GL_FALSE,
+                            attribute.vec_size * attribute.attribute_count *
+                                sizeof(float),
+                            (void *)(i * attribute.vec_size * sizeof(float)));
+
+      glEnableVertexAttribArray(i);
+    }
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+    //                       (void *)0);
+    // glEnableVertexAttribArray(0);
   }
 
   void draw() {
-    // glBindVertexArray(vao);
+    glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
   }
 

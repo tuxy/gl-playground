@@ -53,19 +53,27 @@ int main() {
   }
 
   vector<float> vertices = {
-      -0.5f, -0.5f, 0.0f, // bottom left
-      -0.5f, 0.5f,  0.0f, // top left
-      0.5f,  0.5f,  0.0f, // top right
-      0.5f,  -0.5f, 0.0f, // bottom right
+      // Position data    // Color data
+      -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Left
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Right
+      0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, // Top
   };
 
   vector<int> indices{
-      0, 1, 2, // first
-      1, 2, 3, // second
+      // Using the Geometry class for triangles is inefficient, since it always
+      // uses an EBO
+      0,
+      1,
+      2, // first
   };
 
-  Shader shader = Shader("./shaders/basic.vs", "./shaders/basic.fs");
-  Geometry square = Geometry(vertices, indices);
+  Shader shader = Shader("./shaders/rgb.vs", "./shaders/rgb.fs");
+  shader.use(); // This is a unique one, which is done to activate the program
+                // in order to set the uniform
+  shader.setFloat("xOffset", 0.5f);
+
+  Attribute attribute = Attribute{3, 2};
+  Geometry square = Geometry(vertices, indices, attribute);
 
   while (!glfwWindowShouldClose(window)) {
     // input
