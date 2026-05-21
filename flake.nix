@@ -19,6 +19,9 @@
       in
       {
         devShells.default = pkgs.mkShell {
+          env = {
+            CMAKE_PREFIX_PATH = "${pkgs.imgui}/lib/cmake:$CMAKE_PREFIX_PATH";
+          };
           nativeBuildInputs = with pkgs; [
             pkg-config
             cmake
@@ -29,7 +32,9 @@
             python312Packages.glad
             python312
             glm
+            gf
             libGL
+            imgui
           ];
         };
       }

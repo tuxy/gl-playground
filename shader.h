@@ -1,6 +1,8 @@
 #ifndef SHADER_H
 #define SHADER_H
+#include "geometry.h"
 #include <glad/glad.h>
+#include <glm/fwd.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -85,6 +87,10 @@ public:
   }
   void setFloat(const string &name, float value) {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+  }
+  void setMatrix(const string &name, float const *matrix) {
+    unsigned int matrixLocation = glGetUniformLocation(ID, name.c_str());
+    glUniformMatrix4fv(matrixLocation, 1, GL_FALSE, matrix);
   }
 };
 
